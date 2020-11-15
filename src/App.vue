@@ -2,26 +2,22 @@
   <div id="app">
     <h1>Split</h1>
 
-    <div>
+    <div class="trip-summary">
       <h2> Trip Details </h2>
-
-      <div>
-        <h3>{{Trip.nights}} Nights</h3>
-      </div>
-
-      <div>
-        <h3>${{Trip.cost}} Total Cost</h3>
-      </div>
-
+      <h3>{{Trip.nights}} Nights</h3>
+      <h3>${{Trip.cost}} Total Cost</h3>
       <h3 id="list-summary" ref="listSummary" tabindex="-1">{{listSummary}}</h3>
     </div>
+    <hr>
 
+    <guest-form
+        :tripNights="Trip.nights"
+        @guest-added="addGuest">
+    </guest-form>
     <hr>
 
     <ul aria-labelledby="list-summary" class="stack-large">
-
       <li v-for="guest in GuestList" :key="guest.id">
-
         <guest
           :name="guest.name"
           :paid="guest.paid"
@@ -34,14 +30,7 @@
           @guest-edited="editGuest(guest.id, $event)">
         </guest>
       </li>
-
     </ul>
-
-    <hr>
-    <guest-form
-        :tripNights="Trip.nights"
-        @guest-added="addGuest">
-    </guest-form>
   </div>
 </template>
 
@@ -78,15 +67,6 @@ export default {
     updatePaidStatus(guestId) {
       const guest = this.GuestList.find(guest => guest.id === guestId);
       guest.paid = !guest.paid;
-    },
-    deleteGuest(guestId) {
-      const guestIndex = this.GuestList.findIndex(guest => guest.id === guestId);
-      this.GuestList.splice(guestIndex, 1);
-      this.$refs.listSummary.focus();
-    },
-    editGuest(guestId, newName) {
-      const guestToEdit = this.GuestList.find(guest => guest.id === guestId);
-      guestToEdit.name = newName;
     },
     guestsPerNight() {
       let guestsPerNightList = new Array(this.Trip.nights).fill(0);
