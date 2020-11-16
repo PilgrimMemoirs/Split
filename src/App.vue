@@ -8,15 +8,17 @@
       :paidGuests="paidGuests.length"
       >
     </TripSummary>
-    <GuestForm
-        :tripNights="trip.nights"
-        @guest-added="addGuest">
-    </GuestForm>
+
     <GuestList
       :guests="guests"
       :trip="trip"
       :costPerGuest="costPerGuest">
     </GuestList>
+    <hr>
+    <GuestForm
+        :tripNights="trip.nights"
+        @guest-added="addGuest">
+    </GuestForm>
   </div>
 </template>
 
@@ -76,35 +78,9 @@ export default {
   cursor: pointer;
   text-transform: capitalize;
 }
-.btn__danger {
-  color: #fff;
-  background-color: #ca3c3c;
-  border-color: #bd2130;
-}
-.btn__filter {
-  border-color: lightgrey;
-}
-.btn__danger:focus {
-  outline-color: #c82333;
-}
 .btn__primary {
   color: #fff;
   background-color: #000;
-}
-.btn-group {
-  display: flex;
-  justify-content: space-between;
-}
-.btn-group > * {
-  flex: 1 1 auto;
-}
-.btn-group > * + * {
-  margin-left: 0.8rem;
-}
-.label-wrapper {
-  margin: 0;
-  flex: 0 0 100%;
-  text-align: center;
 }
 [class*="__lg"] {
   display: inline-block;
@@ -118,16 +94,6 @@ export default {
   [class*="__lg"] {
     font-size: 2.4rem;
   }
-}
-.visually-hidden {
-  position: absolute;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  clip: rect(1px 1px 1px 1px);
-  clip: rect(1px, 1px, 1px, 1px);
-  clip-path: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap;
 }
 [class*="stack"] > * {
   margin-top: 0;
@@ -149,7 +115,7 @@ export default {
 }
 /* End global styles */
 #app {
-  max-width: 50rem;
+  max-width: 60rem;
   background: #fff;
   margin: 0 auto;
   padding: 1rem;

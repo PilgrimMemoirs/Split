@@ -2,23 +2,25 @@
   <div class="small-stack">
 
     <div class="guest-info">
-      <p>{{name}}</p>
+      <h4>{{name}}</h4>
     </div>
 
     <div class="nights">
       <ul>
         <li v-for="night in tripNights" :key="night">
-          <p> <span v-if="nightsStaying.includes(night)">x</span> Night {{night}}</p>
+          <span class="attending" v-if="nightsStaying.includes(night)">Night {{night}}</span>
+          <span class="not-attending" v-else>Night {{night}}</span>
         </li>
       </ul>
     </div>
 
-    <h2>Total: ${{totalOwed}}</h2>
+    <p class="total">Total: ${{totalOwed}}</p>
 
     <div class="custom-checkbox">
       <input type="checkbox" :id="id" class="checkbox" :checked="paid" @change="$emit('checkbox-changed')" />
-      <label :for="id" class="checkbox-label">Paid</label>
+      <label :for="id" class="checkbox-label">PAID</label>
     </div>
+    <hr>
   </div>
 </template>
 
@@ -37,11 +39,33 @@ export default {
 </script>
 
 <style scoped>
+.nights {
+  padding-bottom: 2rem;
+}
+
+li {
+  display: inline-block;
+  padding: 1rem;
+}
+
+.total {
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.attending {
+  font-weight: bold;
+}
+
+.not-attending {
+  text-decoration: line-through;
+}
+
 .custom-checkbox > .checkbox-label {
   font-family: Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
+  font-weight: bold;
   font-size: 16px;
   font-size: 1rem;
   line-height: 1.25;
@@ -53,13 +77,13 @@ export default {
   font-family: Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
+  font-weight: 200;
   font-size: 16px;
   font-size: 1rem;
   line-height: 1.25;
   box-sizing: border-box;
   width: 100%;
-  height: 40px;
+  height: 20px;
   height: 2.5rem;
   margin-top: 0;
   padding: 5px;
