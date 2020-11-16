@@ -1,111 +1,68 @@
 <template>
   <div id="app">
-    <h1>Split</h1>
-
-    <div class="trip-summary">
-      <h2> Trip Details </h2>
-      <h3>{{Trip.nights}} Nights</h3>
-      <h3>${{Trip.cost}} Total Cost</h3>
-      <h3 id="list-summary" ref="listSummary" tabindex="-1">{{listSummary}}</h3>
-    </div>
-    <hr>
-
-    <guest-form
-        :tripNights="Trip.nights"
+    <Header :title="site.title"></Header>
+    <TripSummary
+      :nights="trip.nights"
+      :cost="trip.cost"
+      :guests="guests.length"
+      :paidGuests="paidGuests.length"
+      >
+    </TripSummary>
+    <GuestForm
+        :tripNights="trip.nights"
         @guest-added="addGuest">
-    </guest-form>
-    <hr>
-
-    <ul aria-labelledby="list-summary" class="stack-large">
-      <li v-for="guest in GuestList" :key="guest.id">
-        <guest
-          :name="guest.name"
-          :paid="guest.paid"
-          :id="guest.id"
-          :tripNights="Trip.nights"
-          :nightsStaying="guest.nightsStaying"
-          :totalOwed="costPerGuest[guest.id]"
-          @checkbox-changed="updatePaidStatus(guest.id)"
-          @guest-deleted="deleteGuest(guest.id)"
-          @guest-edited="editGuest(guest.id, $event)">
-        </guest>
-      </li>
-    </ul>
+    </GuestForm>
+    <GuestList
+      :guests="guests"
+      :trip="trip"
+      :costPerGuest="costPerGuest">
+    </GuestList>
   </div>
 </template>
 
 <script>
 import uniqueId from 'lodash.uniqueid';
-import Guest from './components/Guest.vue';
+import calculateCostPerGuest from './logic.js';
+import Header from './components/Header.vue';
+import TripSummary from './components/TripSummary.vue';
+import GuestList from './components/GuestList.vue';
 import GuestForm from './components/GuestForm.vue';
 
 export default {
   name: 'App',
   components: {
-    Guest,
+    Header,
+    TripSummary,
+    GuestList,
     GuestForm
   },
   data() {
     return {
-      Trip: {
-        startDate: new Date(2021, 1, 10),
+      site: {
+        title: "Split"
+      },
+      trip: {
         nights: 5,
         cost: 500
       },
-      GuestList: [
+      guests: [
         { id: uniqueId('guest-'), name: "Jamie", nightsStaying: [1, 2, 3, 4], paid: false} ,
         { id: uniqueId('guest-'), name: "Ember", nightsStaying: [3, 4], paid: true },
         { id: uniqueId('guest-'), name: "Ash", nightsStaying: [2, 3, 4], paid: false },
       ]
     };
   },
-  methods: {
-    addGuest(guestName, nightsStaying) {
-      console.log(nightsStaying);
-      this.GuestList.push({id:uniqueId('guest-'), name: guestName, nightsStaying: nightsStaying, paid: false});
-    },
-    updatePaidStatus(guestId) {
-      const guest = this.GuestList.find(guest => guest.id === guestId);
-      guest.paid = !guest.paid;
-    },
-    guestsPerNight() {
-      let guestsPerNightList = new Array(this.Trip.nights).fill(0);
-
-      for (const guest of this.GuestList) {
-        for (const night of guest.nightsStaying) {
-          guestsPerNightList[night - 1] += 1;
-        }
-      }
-      return guestsPerNightList;
-    },
-    costPerNightByGuestsStaying() {
-      const costPerNight = this.Trip.cost / this.Trip.nights;
-      let costPerGuestPerNight = [];
-
-      for (const guests of this.guestsPerNight()) {
-        costPerGuestPerNight.push(costPerNight / guests);
-      }
-
-      return costPerGuestPerNight;
-    }
-  },
   computed: {
-    listSummary() {
-      const paidGuests = this.GuestList.filter(guest =>guest.paid).length;
-      return `${paidGuests} out of ${this.GuestList.length} paid`;
+    paidGuests() {
+      return this.guests.filter(guest =>guest.paid);
     },
     costPerGuest() {
-      let totals = {};
-
-      for (const guest of this.GuestList) {
-        let total = 0;
-        for (const night of guest.nightsStaying) {
-          total += this.costPerNightByGuestsStaying()[night - 1];
-        }
-        totals[guest.id] = total;
-      }
-
-      return totals;
+      return calculateCostPerGuest(this.guests, this.trip);
+    }
+  },
+  methods: {
+    addGuest(guestName, nightsStaying) {
+      this.guests.push({id:uniqueId('guest-'), name: guestName, nightsStaying: nightsStaying, paid: false});
     }
   }
 }
@@ -192,8 +149,9 @@ export default {
 }
 /* End global styles */
 #app {
+  max-width: 50rem;
   background: #fff;
-  margin: 2rem 0 4rem 0;
+  margin: 0 auto;
   padding: 1rem;
   padding-top: 0;
   position: relative;

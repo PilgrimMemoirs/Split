@@ -1,5 +1,5 @@
 <template>
-  <div class="small-stack" v-if="!isEditing">
+  <div class="small-stack">
 
     <div class="guest-info">
       <p>{{name}}</p>
@@ -16,59 +16,22 @@
     <h2>Total: ${{totalOwed}}</h2>
 
     <div class="custom-checkbox">
-      <input type="checkbox" :id="id" class="checkbox" :checked="hasPaid" @change="$emit('checkbox-changed')" />
+      <input type="checkbox" :id="id" class="checkbox" :checked="paid" @change="$emit('checkbox-changed')" />
       <label :for="id" class="checkbox-label">Paid</label>
     </div>
-
   </div>
-
 </template>
 
 <script>
 
 export default {
-  components: {
-  },
   props: {
     id: {required: true, type: String},
     name: {required: true, type: String },
     tripNights: {required: true, type: Number},
-    nightsStaying: {required: false, type: Array},
+    nightsStaying: {required: true, type: Array},
     totalOwed: {required: true, type: Number},
     paid: {default: false, type: Boolean}
-  },
-  data() {
-    return {
-      isEditing: false
-    }
-  },
-  computed: {
-    hasPaid() {
-      return this.paid;
-    }
-  },
-  methods: {
-    deleteGuest() {
-      this.$emit('guest-deleted');
-    },
-    toggleGuestEditForm() {
-      this.isEditing = true;
-    },
-    guestEdited(newLabel) {
-      this.$emit('guest-edited', newLabel);
-      this.isEditing = false;
-      this.focusOnEditButton();
-    },
-    editCancelled() {
-      this.isEditing = false;
-      this.focusOnEditButton();
-    },
-    focusOnEditButton(){
-      this.$nextTick(() => {
-        const editButtonRef = this.$refs.editButton;
-        editButtonRef.focus();
-      })
-    }
   }
 };
 </script>
